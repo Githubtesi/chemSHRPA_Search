@@ -1,6 +1,12 @@
+import functools
 import glob
+import hashlib
 import os
 from typing import List
+
+import Constants
+from searchFileApp.model.models import ChemSHRPA_DATA_PATH
+from searchFileApp.view.user_select_file import get_DirPath_with_dialog
 
 
 def is_shai(file: str) -> bool:
@@ -34,7 +40,7 @@ def is_chemSHRPA_data(file: str) -> bool:
     return is_shci(file) or is_shai(file)
 
 
-def get_chemSHRPA_list(file_path_list: List[str]) -> List[str]:
+def filter_chemSHRPA_list(file_path_list: List[str]) -> List[str]:
     """ chemSHRPAファイルのみ抽出してlistで返す """
     result = []
     for file_path in file_path_list:
@@ -43,6 +49,7 @@ def get_chemSHRPA_list(file_path_list: List[str]) -> List[str]:
     return result
 
 
+@functools.lru_cache()
 def get_files(folderpath: str) -> List[str]:
     """ 指定したフォルダ以下にあるファイルリストを取得 """
     if os.path.isdir(folderpath):
@@ -51,13 +58,37 @@ def get_files(folderpath: str) -> List[str]:
         raise FileNotFoundError(folderpath)
 
 
-if __name__ == "__main__":
-    # import doctest
+def get_hash_md5(filepath: str) -> str:
+    """ ファイルのハッシュ値を取得 """
+    # ファイル を バイナリーモード で開く
+    with open(filepath, 'rb') as file:
+        # ファイルを読み取る
+        fileData = file.read()
+        # ハッシュ値-md5の取得
+        hash_md5 = hashlib.md5(fileData).hexdigest()
+        return hash_md5
 
-    # doctest.testmod()
 
-    # テスト
-    l = get_files(r"\\IRS5\irs5_public\DQS\品証共通フォルダ\環境調査chemSHRPA RoHS2\製品")
-    l2 = get_chemSHRPA_list(l)
+def test():
+    """ Doctest """
+    import doctest
+    doctest.testmod()
+
+
+def test_main():
+    """ サンプルテスト"""
+    target_path = get_DirPath_with_dialog(Constants.CHEMSHRPA_SOURCE)
+    l = get_files(target_path)
+    l2 = filter_chemSHRPA_list(l)
+    result: List[ChemSHRPA_DATA_PATH] = []
     for item in l2:
-        print(item)
+        result.append(ChemSHRPA_DATA_PATH(item, get_hash_md5(item)))
+
+    import pprint
+
+    pp = pprint.PrettyPrinter(indent=4, width=40)
+    pp.pprint(result)
+
+
+if __name__ == "__main__":
+    test_main()
