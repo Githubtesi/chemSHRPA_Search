@@ -1,6 +1,9 @@
+import hashlib
 import os
 
-import hashlib
+"""
+shaiファイルの中身抽出関連のパッケージの前に行うファイルパッケージ
+"""
 
 
 def add_extension_zip(filepath: str) -> str:
@@ -20,10 +23,12 @@ def get_hash_md5(filepath: str) -> str:
 
 
 def rename_chemSHRPA2zip(pre_file_path: str):
-    """ ファイル.shai を ハッシュ.zip にリネームする """
+    """ ファイル.shai を ハッシュ.zip にリネームする
+    pre_file_path : 解凍するフォルダ先
+    """
     PAIRENT_DIR = os.path.dirname(os.path.abspath(pre_file_path))
     # ハッシュ.zip
-    rename = get_hash_md5(filepath)
+    rename = get_hash_md5(pre_file_path)
     rename = add_extension_zip(rename)
     rename_file_path = os.path.join(PAIRENT_DIR, rename)
     try:
@@ -35,5 +40,5 @@ def rename_chemSHRPA2zip(pre_file_path: str):
 
 
 if __name__ == '__main__':
-    filepath = r"C:\Users\IR-001\PycharmProjects\chemSHRPA_Search\unzipChemSHRPA\1043451-01.shai"
+    filepath = r"C:\Users\yoshiaki\PycharmProjects\chemSHRPA_Search\zipfiles\test44SHAI_Temp_W01065E_20190206162426.shai"
     rename_chemSHRPA2zip(filepath)

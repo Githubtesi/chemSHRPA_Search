@@ -2,6 +2,10 @@ import glob
 import os
 from typing import List
 
+"""
+shaiファイル検索関連のパッケージ
+"""
+
 
 def is_shai(file: str) -> bool:
     """　
@@ -57,7 +61,7 @@ if __name__ == "__main__":
     # doctest.testmod()
 
     # テスト
-    l = get_files(r"\\IRS5\irs5_public\DQS\品証共通フォルダ\環境調査chemSHRPA RoHS2\製品")
+    l = get_files(r"C:\Users\yoshiaki\PycharmProjects\search_chemSHRPA\chemSHRPA_Data")
     l2 = get_chemSHRPA_list(l)
     for item in l2:
         print(item)
